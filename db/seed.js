@@ -1,5 +1,7 @@
 const db = require("./connection");
 const format = require("pg-format");
+const { attachUserID } = require("./utils");
+const { propertiesData } = require("./data/test/index.js");
 
 async function seed(propertyTypesArr, usersArr) {
   await db.query(`DROP TABLE IF EXISTS reviews`);
@@ -94,6 +96,14 @@ async function seed(propertyTypesArr, usersArr) {
     format(
       `INSERT INTO users(first_name, surname, email, phone_number, is_host, avatar ) VALUES %L`,
       usersArr
+    )
+  );
+
+  const propertiesArr = await attachUserID(propertiesData);
+  await db.query(
+    format(
+      `INSERT INTO properties (host_id, name, property_type, location, price_per_night, description) VALUES %L`,
+      propertiesArr
     )
   );
 }
