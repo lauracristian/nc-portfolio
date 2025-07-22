@@ -19,8 +19,8 @@ npm run db-setup
 2. Get the credentials for the database and add them to a .env file.
 
 ```sh
-PGDATABASE = name
-PGPASSWORD = password
+PGDATABASE = airbnc_test
+PGPASSWORD = yourpassword
 
 * Ensure the .env is added to a .gitignore file.
 ```
