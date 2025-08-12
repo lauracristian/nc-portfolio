@@ -1,89 +1,24 @@
 const db = require("./connection");
 const format = require("pg-format");
-const { attachUserID } = require("./utils");
-const { propertiesData } = require("./data/test/index.js");
+const {
+  propertyTypesData,
+  usersData,
+  propertiesData,
+  reviewsData,
+  imagesData,
+  favouritesData,
+  bookingsData,
+} = require("./data/test/index.js");
+const dropTables = require("./dropTables.js");
+const createTables = require("./createTables.js");
 
-async function seed(propertyTypesArr, usersArr) {
-  await db.query(`DROP TABLE IF EXISTS reviews`);
-  await db.query(`DROP TABLE IF EXISTS images`);
-  await db.query(`DROP TABLE IF EXISTS favourites`);
-  await db.query(`DROP TABLE IF EXISTS bookings`);
-  await db.query(`DROP TABLE IF EXISTS properties_amenities`);
-  await db.query(`DROP TABLE IF EXISTS properties`);
-  await db.query(`DROP TABLE IF EXISTS users`);
-  await db.query(`DROP TABLE IF EXISTS property_types`);
-  await db.query(`DROP TABLE IF EXISTS amenities`);
+async function seed() {
+  await dropTables();
+  await createTables();
 
-  ///////////////////////////////////////////////////////////////
-
-  await db.query(`CREATE TABLE property_types(
-    property_type VARCHAR NOT NULL PRIMARY KEY,
-    description TEXT
-    )`);
-
-  await db.query(`CREATE TABLE users(
-    user_id SERIAL PRIMARY KEY,
-    first_name VARCHAR NOT NULL,
-    surname VARCHAR NOT NULL,
-    email VARCHAR NOT NULL,
-    phone_number VARCHAR,
-    is_host BOOL NOT NULL,
-    avatar VARCHAR,
-    created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-  await db.query(`CREATE TABLE properties(
-    property_id SERIAL PRIMARY KEY,
-    host_id INT NOT NULL REFERENCES users(user_id),
-    name VARCHAR NOT NULL,
-    location VARCHAR NOT NULL,
-    property_type VARCHAR NOT NULL REFERENCES property_types(property_type),
-    price_per_night DECIMAL NOT NULL,
-    description TEXT
-    )`);
-
-  await db.query(`CREATE TABLE reviews(
-    review_id SERIAL PRIMARY KEY,
-    property_id INT NOT NULL REFERENCES properties(property_id),
-    guest_id INT NOT NULL REFERENCES users(user_id),
-    rating INT NOT NULL,
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-  await db.query(`CREATE TABLE images(
-    image_id SERIAL PRIMARY KEY,
-    property_id INT NOT NULL REFERENCES properties(property_id),
-    image_url VARCHAR NOT NULL,
-    alt_text VARCHAR NOT NULL
-    )`);
-
-  await db.query(`CREATE TABLE favourites(
-    favourite_id SERIAL PRIMARY KEY,
-    guest_id INT NOT NULL REFERENCES users(user_id),
-    property_id INT NOT NULL REFERENCES properties(property_id)
-    )`);
-
-  await db.query(`CREATE TABLE bookings(
-    booking_id SERIAL PRIMARY KEY,
-    property_id INT NOT NULL REFERENCES properties(property_id),
-    guest_id INT NOT NULL REFERENCES users(user_id),
-    check_in_date DATE NOT NULL,
-    check_out_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-    )`);
-
-  await db.query(`CREATE TABLE amenities(
-    amenity VARCHAR PRIMARY KEY
-    )`);
-
-  await db.query(`CREATE TABLE properties_amenities(
-    property_amenities SERIAL PRIMARY KEY,
-    property_id INT NOT NULL REFERENCES properties(property_id),
-    amenity_slug VARCHAR NOT NULL REFERENCES amenities(amenity)
-    )`);
-
-  //////////////////////////////////////////////////////////////////////////
+  const propertyTypesArr = propertyTypesData.map(
+    ({ property_type, description }) => [property_type, description]
+  );
 
   await db.query(
     format(
@@ -92,19 +27,133 @@ async function seed(propertyTypesArr, usersArr) {
     )
   );
 
-  await db.query(
+  const usersArr = usersData.map(
+    ({ first_name, surname, email, phone_number, is_host, avatar }) => [
+      first_name,
+      surname,
+      email,
+      phone_number,
+      is_host,
+      avatar,
+    ]
+  );
+
+  const { rows: users } = await db.query(
     format(
-      `INSERT INTO users(first_name, surname, email, phone_number, is_host, avatar ) VALUES %L`,
+      `INSERT INTO users(first_name, surname, email, phone_number, is_host, avatar ) VALUES %L RETURNING user_id, CONCAT(first_name, ' ',surname) AS host_name;`,
       usersArr
     )
   );
 
-  const propertiesArr = await attachUserID(propertiesData);
+  const userDetails = {};
+  users.forEach((user) => {
+    userDetails[user.host_name] = user.user_id;
+  });
+
+  const mutablePropertiesData = [...propertiesData];
+
+  const propertiesWithHostID = mutablePropertiesData.map((property) => {
+    const hostID = userDetails[property.host_name];
+
+    const { name, property_type, location, price_per_night, description } =
+      property;
+
+    return [
+      hostID,
+      name,
+      property_type,
+      location,
+      price_per_night,
+      description,
+    ];
+  });
+
+  const { rows: properties } = await db.query(
+    format(
+      `INSERT INTO properties (host_id, name, property_type, location, price_per_night, description) VALUES %L RETURNING property_id, name as property_name`,
+      propertiesWithHostID
+    )
+  );
+
+  const propertyDetails = {};
+  properties.forEach((property) => {
+    propertyDetails[property.property_name] = property.property_id;
+  });
+
+  const mutableReviewsData = [...reviewsData];
+  const formattedReviewsData = mutableReviewsData.map((review) => {
+    guestID = userDetails[review.guest_name];
+    propertyID = propertyDetails[review.property_name];
+
+    const { rating, comment, created_at } = review;
+
+    return [propertyID, guestID, rating, comment, created_at];
+  });
+
   await db.query(
     format(
-      `INSERT INTO properties (host_id, name, property_type, location, price_per_night, description) VALUES %L`,
-      propertiesArr
+      `INSERT INTO reviews (property_id, guest_id, rating, comment, created_at) VALUES %L`,
+      formattedReviewsData
     )
+  );
+
+  const mutableImagesData = [...imagesData];
+  const formattedImagesData = mutableImagesData.map((image) => {
+    propertyID = propertyDetails[image.property_name];
+
+    const { image_url, alt_tag } = image;
+    return [propertyID, image_url, alt_tag];
+  });
+
+  await db.query(
+    format(
+      `INSERT INTO images (property_id, image_url, alt_text) VALUES %L`,
+      formattedImagesData
+    )
+  );
+
+  const mutableFavouritesData = [...favouritesData];
+  const formattedFavouritesData = mutableFavouritesData.map((favourite) => {
+    guestID = userDetails[favourite.guest_name];
+    propertyID = propertyDetails[favourite.property_name];
+
+    return [guestID, propertyID];
+  });
+
+  await db.query(
+    format(
+      `INSERT INTO favourites (guest_id, property_id) VALUES %L`,
+      formattedFavouritesData
+    )
+  );
+
+  const mutableBookingsData = [...bookingsData];
+  const formattedBookingsData = mutableBookingsData.map((booking) => {
+    guestID = userDetails[booking.guest_name];
+    propertyID = propertyDetails[booking.property_name];
+
+    const { check_in_date, check_out_date } = booking;
+
+    return [propertyID, guestID, check_in_date, check_out_date];
+  });
+
+  await db.query(
+    format(
+      `INSERT INTO bookings (property_id, guest_id, check_in_date, check_out_date) VALUES %L`,
+      formattedBookingsData
+    )
+  );
+
+  const flatAmenitiesData = mutablePropertiesData.flatMap(
+    ({ amenities }) => amenities
+  );
+
+  const uniqueAmenities = [...new Set(flatAmenitiesData.flat())];
+
+  const formattedAmenitiesData = uniqueAmenities.map((amenity) => [amenity]);
+
+  await db.query(
+    format(`INSERT INTO amenities (amenity) VALUES %L`, formattedAmenitiesData)
   );
 }
 

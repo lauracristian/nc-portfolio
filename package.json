@@ -4,9 +4,10 @@
   "description": "Laura's project with Northcoders",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest app.test.js",
     "db-setup": "psql -f ./db/db-setup.sql",
-    "seed": "node ./db/seed-run.js"
+    "seed": "node ./db/seed-run.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,14 @@
   "homepage": "https://github.com/lauracristian/nc-portfolio#readme",
   "dependencies": {
     "dotenv": "^17.2.0",
+    "express": "^5.1.0",
     "jest": "^30.0.4",
+    "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "jest-sorted": "^1.0.15",
+    "supertest": "^7.1.4"
   }
 }

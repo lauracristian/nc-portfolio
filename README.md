@@ -2,7 +2,18 @@
 
 ## Before you start
 
-This project uses pg, pg-format, dotenv and jest, so you need to install all the dependencies.
+This project uses
+
+1. pg
+2. pg-format
+3. dotenv
+4. jest
+5. jest sorted
+6. supertest
+7. express
+8. nodemon
+
+Run the following command in your terminal to install all the dependencies.
 
 ```sh
 npm install
