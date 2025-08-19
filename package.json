@@ -7,7 +7,7 @@
     "test": "jest app.test.js",
     "db-setup": "psql -f ./db/db-setup.sql",
     "seed": "node ./db/seed-run.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon listen.js"
   },
   "repository": {
     "type": "git",

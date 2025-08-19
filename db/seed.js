@@ -155,6 +155,20 @@ async function seed() {
   await db.query(
     format(`INSERT INTO amenities (amenity) VALUES %L`, formattedAmenitiesData)
   );
+
+  const formattedPropertyAmenities = propertiesData.flatMap((property) => {
+    propertyID = propertyDetails[property.name];
+    const { amenities } = property;
+
+    return amenities.map((amenity) => [propertyID, amenity]);
+  });
+
+  await db.query(
+    format(
+      `INSERT INTO properties_amenities (property_id, amenity_slug) VALUES %L`,
+      formattedPropertyAmenities
+    )
+  );
 }
 
 module.exports = seed;

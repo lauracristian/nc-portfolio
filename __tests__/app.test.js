@@ -8,6 +8,12 @@ beforeEach(() => seed());
 afterAll(() => db.end());
 
 describe("app", () => {
+  describe("Invalid URL Errors", () => {
+    test("status 404: invalid endpoint responds with error message", async () => {
+      const { body } = await request(app).get("/invalid-url").expect(404);
+      expect(body.msg).toBe("URL not found");
+    });
+  });
   describe("GET /api/properties", () => {
     test("status 200: get request to /api/properties returns an array of properties", async () => {
       const { body } = await request(app).get("/api/properties").expect(200);
@@ -30,13 +36,6 @@ describe("app", () => {
       const propertiesArr = body.properties;
       expect(propertiesArr).toBeSortedBy("favourite_count", {
         descending: true,
-      });
-    });
-
-    describe("Errors", () => {
-      test("status 404: invalid endpoint responds with error message", async () => {
-        const { body } = await request(app).get("/invalid-url").expect(404);
-        expect(body.msg).toBe("URL not found");
       });
     });
 
@@ -130,15 +129,16 @@ describe("app", () => {
         .expect(200);
 
       expect(typeof property).toBe("object");
-
-      expect(property.hasOwnProperty("property_id")).toBe(true);
-      expect(property.hasOwnProperty("property_name")).toBe(true);
-      expect(property.hasOwnProperty("location")).toBe(true);
-      expect(property.hasOwnProperty("price_per_night")).toBe(true);
-      expect(property.hasOwnProperty("description")).toBe(true);
-      expect(property.hasOwnProperty("host")).toBe(true);
-      expect(property.hasOwnProperty("host_avatar")).toBe(true);
-      expect(property.hasOwnProperty("favourite_count")).toBe(true);
+      expect(property).toEqual({
+        property_id: 3,
+        property_name: "Chic Studio Near the Beach",
+        location: "Brighton, UK",
+        price_per_night: "90",
+        description: "Description of Chic Studio Near the Beach.",
+        host: "Alice Johnson",
+        host_avatar: "https://example.com/images/alice.jpg",
+        favourite_count: "1",
+      });
     });
 
     describe("Queries - User ID", () => {
@@ -148,18 +148,17 @@ describe("app", () => {
           .expect(200);
 
         expect(typeof property).toBe("object");
-
-        expect(property.hasOwnProperty("property_id")).toBe(true);
-        expect(property.hasOwnProperty("property_name")).toBe(true);
-        expect(property.hasOwnProperty("location")).toBe(true);
-        expect(property.hasOwnProperty("price_per_night")).toBe(true);
-        expect(property.hasOwnProperty("description")).toBe(true);
-        expect(property.hasOwnProperty("host")).toBe(true);
-        expect(property.hasOwnProperty("host_avatar")).toBe(true);
-        expect(property.hasOwnProperty("favourite_count")).toBe(true);
-
-        expect(property.hasOwnProperty("favourited")).toBe(true);
-        expect(typeof property.favourited).toBe("boolean");
+        expect(property).toEqual({
+          property_id: 3,
+          property_name: "Chic Studio Near the Beach",
+          location: "Brighton, UK",
+          price_per_night: "90",
+          description: "Description of Chic Studio Near the Beach.",
+          host: "Alice Johnson",
+          host_avatar: "https://example.com/images/alice.jpg",
+          favourite_count: "1",
+          favourited: true,
+        });
       });
     });
 
@@ -244,6 +243,51 @@ describe("app", () => {
       test("status 404: Results not found for valid but non-existent id", async () => {
         const { body } = await request(app).get("/api/users/999").expect(404);
         expect(body.msg).toBe("Results not found");
+      });
+    });
+  });
+  describe("POST /api/properties/:id/reviews", () => {
+    test("status 201: inserts reviews into properties", async () => {
+      const { body: review } = await request(app)
+        .post("/api/properties/3/reviews")
+        .send({ guest_id: 6, rating: 5, comment: "Splendid location" })
+        .expect(201);
+
+      expect(review.hasOwnProperty("review_id")).toBe(true);
+      expect(review.hasOwnProperty("property_id")).toBe(true);
+      expect(review.hasOwnProperty("guest_id")).toBe(true);
+      expect(review.hasOwnProperty("rating")).toBe(true);
+      expect(review.hasOwnProperty("comment")).toBe(true);
+      expect(review.hasOwnProperty("created_at")).toBe(true);
+    });
+    describe("Errors", () => {
+      test("status 400: missing required fields comes up with error message", async () => {
+        const { body } = await request(app)
+          .post("/api/properties/3/reviews")
+          .send({ rating: 2 })
+          .expect(400);
+
+        expect(body.msg).toBe("Missing required fields");
+      });
+      test("status 400: wrong data type in fields comes up with error message", async () => {
+        const { body } = await request(app)
+          .post("/api/properties/3/reviews")
+          .send({
+            guest_id: 6,
+            rating: "Splendid",
+            comment: "Splendid location",
+          })
+          .expect(400);
+
+        expect(body.msg).toBe("Wrong data type");
+      });
+      test("status 404: wrong data type in fields comes up with error message", async () => {
+        const { body } = await request(app)
+          .post("/api/properties/999/reviews")
+          .send({ guest_id: 6, rating: 5, comment: "Splendid location" })
+          .expect(404);
+
+        expect(body.msg).toBe("Property not found");
       });
     });
   });

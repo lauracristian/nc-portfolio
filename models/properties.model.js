@@ -50,7 +50,7 @@ exports.selectAllProperties = async (maxprice, minprice, property_type) => {
   return { properties: rows };
 };
 
-exports.selectAllPropertiesByID = async (id) => {
+exports.selectPropertyByID = async (id) => {
   const { rows } = await db.query(
     `SELECT
        properties.property_id,
@@ -77,6 +77,7 @@ exports.selectAllPropertiesByID = async (id) => {
   `,
     [id]
   );
+
   if (!rows.length) {
     return Promise.reject({ status: 404, msg: "Property not found" });
   }
@@ -121,6 +122,23 @@ exports.selectAllUsersByID = async (id) => {
   if (!rows.length) {
     return Promise.reject({ status: 404, msg: "Results not found" });
   }
+
+  return rows[0];
+};
+
+exports.insertPropertyReviewByUser = async (
+  property_id,
+  guest_id,
+  rating,
+  comment
+) => {
+  const queryValues = [property_id, guest_id, rating, comment];
+  const { rows } = await db.query(
+    `INSERT INTO reviews (property_id, guest_id, rating, comment)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+    queryValues
+  );
 
   return rows[0];
 };
