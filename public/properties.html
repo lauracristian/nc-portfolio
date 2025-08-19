@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css.css" />
+    <title>Properties Requests</title>
+  </head>
+  <body>
+    <header>
+      <h1>Properties Requests</h1>
+    </header>
+    <h2>GET</h2>
+    <ul class="numbered-circle">
+      <li>
+        <span class="number">1</span>
+        <h3>/api/properties</h3>
+      </li>
+    </ul>
+    <p>
+      This GET request will return a list of all available properties in the
+      properties table.
+    </p>
+    <div class="example-box">
+      <h3>Status 200</h3>
+      <p>
+        {"properties": [ { "property_id": id, "property_name": name, "location":
+        location, "price_per_night": price, "host": host name}, ...] }
+      </p>
+    </div>
+    <ul class="numbered-circle">
+      <li>
+        <span class="number">2</span>
+        <h3>/api/properties/:id</h3>
+      </li>
+    </ul>
+    <p>
+      This GET request will return a specific property, whose property_id
+      matches the parametric endpoint.
+    </p>
+    <div class="example-box">
+      <h3>Status 200</h3>
+      <p>
+        {"properties": [ { "property_id": id, "property_name": name, "location":
+        location, "price_per_night": price, "host": host name}, ...] }
+      </p>
+    </div>
+  </body>
+</html>

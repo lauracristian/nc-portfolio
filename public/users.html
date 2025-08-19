@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css.css" />
+    <title>Users Requests</title>
+  </head>
+  <body>
+    <header>
+      <h1>Users Requests</h1>
+    </header>
+    <h2>GET</h2>
+    <ul class="numbered-circle">
+      <li>
+        <span class="number">1</span>
+        <h3>/api/users/:id</h3>
+      </li>
+    </ul>
+    <p>
+      This GET request will return a specific user, based on the parametric
+      endpoint.
+    </p>
+    <div class="example-box">
+      <h3>Status 200</h3>
+      <p>
+        { "user": { "user_id": id, "first_name": name, "surname": name, "email":
+        email, "phone_number": phone number, "avatar": image url, "created_at":
+        data } }
+      </p>
+    </div>
+  </body>
+</html>

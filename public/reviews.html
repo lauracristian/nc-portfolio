@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css.css" />
+    <title>Reviews Requests</title>
+  </head>
+  <body>
+    <header>
+      <h1>Reviews Requests</h1>
+    </header>
+    <h2>GET</h2>
+    <ul class="numbered-circle">
+      <li>
+        <span class="number">1</span>
+        <h3>/api/properties/:id/reviews</h3>
+      </li>
+    </ul>
+    <p>
+      This GET request will return a list of all reviews posted for a specific
+      property, based on the parametric endpoint.
+    </p>
+    <div class="example-box">
+      <h3>Status 200</h3>
+      <p>
+        {"reviews": [{ "review_id": id,"comment": comment,"rating":
+        rating,"created_at": date,"guest": guest name, "guest_avatar": img_url
+        }, ... ], "average_rating": avg of ratings }
+      </p>
+    </div>
+    <h2>POST</h2>
+    <ul class="numbered-circle">
+      <li>
+        <span class="number">2</span>
+        <h3>/api/properties/:id/reviews</h3>
+      </li>
+    </ul>
+    <p>
+      This POST request will post a new review for a specific property, based on
+      the parametric endpoint.
+    </p>
+    <div class="example-box">
+      <h3>Status 201</h3>
+      <p>
+        { "review_id": id, "property_id": id, "guest_id": id,"rating": rating,
+        "comment": comment, "created_at": date}
+      </p>
+    </div>
+  </body>
+</html>
