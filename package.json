@@ -2,12 +2,14 @@
   "name": "nc-portfolio",
   "version": "1.0.0",
   "description": "Laura's project with Northcoders",
-  "main": "index.js",
+  "main": "listen.js",
   "scripts": {
     "test": "jest app.test.js",
     "db-setup": "psql -f ./db/db-setup.sql",
     "seed": "node ./db/seed-run.js",
-    "dev": "nodemon listen.js"
+    "seed-prod": "NODE_ENV=production npm run seed",
+    "dev": "nodemon listen.js",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,7 @@
   },
   "homepage": "https://github.com/lauracristian/nc-portfolio#readme",
   "dependencies": {
-    "dotenv": "^17.2.0",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jest": "^30.0.4",
     "nodemon": "^3.1.10",
