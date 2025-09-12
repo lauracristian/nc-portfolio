@@ -13,12 +13,14 @@ function App() {
   return (
     <>
       <Header title={title} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/properties" element={<Properties />} />
-        <Route path="/properties/:id" element={<SingleProperty />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <div id="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/properties" element={<Properties />} />
+          <Route path="/properties/:id" element={<SingleProperty />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
     </>
   );
 }
