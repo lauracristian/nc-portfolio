@@ -1,17 +1,26 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function PropertyCard({ properties }) {
+  const [favourited, setFavourited] = useState(false);
+
   return (
-    <div id="property-card">
+    <>
       {properties.map((property) => (
-        <Link
-          key={property.property_id}
-          to={`/properties/${property.property_id}`}
-        >
-          <div>{property.property_name}</div>
+        <div key={property.property_id} id="property-card">
+          <Link to={`/properties/${property.property_id}`}>
+            <h3>{property.property_name}</h3>
+          </Link>
           <div>£ {property.price_per_night} per night</div>
-        </Link>
+          <button
+            onClick={() => {
+              setFavourited(!favourited);
+            }}
+          >
+            {favourited ? "❤️" : "🤍"}
+          </button>
+        </div>
       ))}
-    </div>
+    </>
   );
 }

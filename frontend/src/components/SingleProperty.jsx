@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Reviews from "./Reviews";
 
 export default function SingleProperty() {
   const [property, setProperty] = useState({});
@@ -21,7 +22,8 @@ export default function SingleProperty() {
       <br />
       <p>{property.description}</p>
       <br />
-      <p>Favourited by: {property.favourite_count}</p>
+      <p>Favourited by: {property.favourite_count}</p> <br />
+      <Reviews />
     </div>
   );
 }

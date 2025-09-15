@@ -4,8 +4,6 @@ export default function Home(setSearchTerm) {
   return (
     <div id="homepage">
       <Search />
-
-      <p>Property List</p>
     </div>
   );
 }

@@ -7,6 +7,7 @@ export default function PropertyList() {
   const [properties, setProperties] = useState([]);
   const [searchParams] = useSearchParams();
   const searchLocation = searchParams.get("search").toLowerCase() || "";
+  const sortBy = searchParams.get("sort");
 
   useEffect(() => {
     axios
@@ -16,9 +17,23 @@ export default function PropertyList() {
       });
   }, []);
 
-  const filteredProperties = properties.filter((property) =>
+  let filteredProperties = properties.filter((property) =>
     property.location.toLowerCase().includes(searchLocation)
   );
+
+  if (sortBy === "maxprice") {
+    filteredProperties = [...filteredProperties].sort(
+      (a, b) => +b.price_per_night - +a.price_per_night
+    );
+  } else if (sortBy === "minprice") {
+    filteredProperties = [...filteredProperties].sort(
+      (a, b) => +a.price_per_night - +b.price_per_night
+    );
+  } else if (sortBy === "favourites") {
+    filteredProperties = [...filteredProperties].sort(
+      (a, b) => +b.favourite_count - +a.favourite_count
+    );
+  }
 
   return (
     <>

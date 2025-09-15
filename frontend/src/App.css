@@ -14,3 +14,55 @@ body {
   margin: 0 auto;
   text-align: center;
 }
+
+#property-card * {
+  color: #000;
+  text-align: left;
+}
+
+#property-card {
+  background: #ffffff;
+  padding: 1em 2em;
+  width: 75vw;
+  margin: 1em;
+  justify-self: center;
+}
+
+#property-card button {
+  background: transparent;
+  border-color: #c0c0c0;
+}
+
+#review-card {
+  margin: 1em;
+  background: white;
+  padding: 1em;
+  border-radius: 8px;
+  width: 75vw;
+  justify-self: center;
+}
+
+textarea {
+  width: 75vw;
+  border: none;
+  padding: 1em;
+  border: 8px;
+  display: block;
+  justify-self: center;
+  margin: 1em;
+  min-height: 10vh;
+}
+
+#review-container form > label {
+  display: block;
+  font-weight: bold;
+  margin: 1em 0 0.4em 0;
+}
+
+#review-container form > input {
+  font-size: 16px;
+  width: 75vw;
+  text-align: center;
+  padding: 1em;
+  border: none;
+}
