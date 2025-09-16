@@ -3,9 +3,9 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import Properties from "./components/Properties";
-import Dashboard from "./components/Dashboard";
-import SingleProperty from "./components/SingleProperty";
+import Properties from "./components/Properties/Properties";
+import Dashboard from "./components/Dashboard/Dashboard";
+import SingleProperty from "./components/Properties/SingleProperty";
 
 function App() {
   const title = "Airbnc";

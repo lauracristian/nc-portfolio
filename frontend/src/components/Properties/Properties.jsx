@@ -1,6 +1,6 @@
-import Filter from "./Filter";
+import Filter from "../Toolbars/Filter";
 import PropertyList from "./PropertyList";
-import Search from "./Search";
+import Search from "../Toolbars/Search";
 
 export default function Properties(setSearchTerm) {
   return (

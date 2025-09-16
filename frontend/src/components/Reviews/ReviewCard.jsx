@@ -5,11 +5,13 @@ export default function ReviewCard({ reviews }) {
         ? "No reviews"
         : reviews.map((review) => (
             <div key={review.review_id} id="review-card">
-              <h4>{review.guest}</h4>
               <p>
                 <b>Rating: {review.rating}</b>
               </p>
               <p>{review.comment}</p>
+              <br />
+              <p>{review.guest}</p>
+
               <p>{review.created_at}</p>
             </div>
           ))}

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Reviews from "./Reviews";
+import Reviews from "../Reviews/Reviews";
 
 export default function SingleProperty() {
   const [property, setProperty] = useState({});
