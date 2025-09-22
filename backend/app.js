@@ -6,6 +6,8 @@ const {
   getReviewsByPropertyID,
   getUsersByID,
   addPropertyReviewByUser,
+  getAllUsers,
+  getAllImages,
 } = require("./controllers/properties.controller");
 const {
   handleInvalidURL,
@@ -27,6 +29,8 @@ app.get("/api/properties", getAllProperties);
 app.get("/api/properties/:id", getPropertyByID);
 app.get("/api/properties/:id/reviews", getReviewsByPropertyID);
 app.get("/api/users/:id", getUsersByID);
+app.get("/api/users", getAllUsers);
+app.get("/api/images", getAllImages);
 
 app.post("/api/properties/:property_id/reviews", addPropertyReviewByUser);
 

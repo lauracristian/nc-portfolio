@@ -5,6 +5,8 @@ const {
   selectAllUsersByID,
   insertPropertyReviewByUserID,
   insertPropertyReviewByUser,
+  selectAllUsers,
+  selectAllImages,
 } = require("../models/properties.model");
 
 exports.getAllProperties = async (req, res, next) => {
@@ -77,6 +79,24 @@ exports.addPropertyReviewByUser = async (req, res, next) => {
     );
 
     res.status(201).send(review);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await selectAllUsers();
+    res.status(200).send(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllImages = async (req, res, next) => {
+  try {
+    const images = await selectAllImages();
+    res.status(200).send(images);
   } catch (err) {
     next(err);
   }

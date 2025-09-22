@@ -1,5 +1,7 @@
 const db = require("./connection");
 const format = require("pg-format");
+
+const ENV = process.env.NODE_ENV || "development";
 const {
   propertyTypesData,
   usersData,
@@ -8,7 +10,10 @@ const {
   imagesData,
   favouritesData,
   bookingsData,
-} = require("./data/test/index.js");
+} = require(ENV === "production"
+  ? "./data/dev/index.js"
+  : "./data/test/index.js");
+
 const dropTables = require("./dropTables.js");
 const createTables = require("./createTables.js");
 

@@ -142,3 +142,15 @@ exports.insertPropertyReviewByUser = async (
 
   return rows[0];
 };
+
+exports.selectAllUsers = async () => {
+  const { rows } = await db.query(`SELECT * FROM users`);
+
+  return { users: rows };
+};
+
+exports.selectAllImages = async () => {
+  const { rows } = await db.query(`SELECT * FROM images`);
+
+  return { images: rows };
+};

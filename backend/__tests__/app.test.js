@@ -291,4 +291,41 @@ describe("app", () => {
       });
     });
   });
+
+  describe("GET /api/users", () => {
+    test("status 200: get request to /api/users returns an array of users", async () => {
+      const { body } = await request(app).get("/api/users").expect(200);
+      const usersArr = body.users;
+
+      expect(Array.isArray(usersArr)).toBe(true);
+      expect(usersArr.length).toBeGreaterThan(0);
+
+      usersArr.forEach((user) => {
+        expect(user.hasOwnProperty("user_id")).toBe(true);
+        expect(user.hasOwnProperty("first_name")).toBe(true);
+        expect(user.hasOwnProperty("surname")).toBe(true);
+        expect(user.hasOwnProperty("email")).toBe(true);
+        expect(user.hasOwnProperty("phone_number")).toBe(true);
+        expect(user.hasOwnProperty("is_host")).toBe(true);
+        expect(user.hasOwnProperty("avatar")).toBe(true);
+        expect(user.hasOwnProperty("created_at")).toBe(true);
+      });
+    });
+  });
+  describe("GET /api/images", () => {
+    test("status 200: get request to /api/images returns an array of images", async () => {
+      const { body } = await request(app).get("/api/images").expect(200);
+      const imagesArr = body.images;
+
+      expect(Array.isArray(imagesArr)).toBe(true);
+      expect(imagesArr.length).toBeGreaterThan(0);
+
+      imagesArr.forEach((image) => {
+        expect(image.hasOwnProperty("image_id")).toBe(true);
+        expect(image.hasOwnProperty("property_id")).toBe(true);
+        expect(image.hasOwnProperty("image_url")).toBe(true);
+        expect(image.hasOwnProperty("alt_text")).toBe(true);
+      });
+    });
+  });
 });
